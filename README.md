@@ -6,9 +6,6 @@ A production-ready **React Native / Expo** personal dashboard app with real-time
 
 ## 🚀 Quick Start
 
-
-## 🚀 Quick Start
-
 ### 1. Install Dependencies
 ```bash
 npm install 
