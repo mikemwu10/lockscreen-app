@@ -1,50 +1,79 @@
-# Welcome to your Expo app 👋
+# 🔒 Lock Screen App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A production-ready **React Native / Expo** personal dashboard app with real-time Firebase sync. Set a custom wallpaper, manage your daily to-do list, and keep yourself motivated with a rotating quote library — all synced across devices via Firebase Auth + Firestore.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Quick Start
 
-   ```bash
-   npm install
-   ```
 
-2. Start the app
+## 🚀 Quick Start
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+### 1. Install Dependencies
 ```bash
-npm run reset-project
+npm install 
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Configure Environment Variables
 
-## Learn more
+```bash
+cp .env.example .env
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Open `.env` and fill in your Firebase project values 
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 3. Start the App
 
-## Join the community
+```bash
+npx expo start
+```
 
-Join our community of developers creating universal apps.
+Scan the QR code with the **Expo Go** app (iOS / Android) or press `i` for iOS Simulator / `a` for Android Emulator.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## 🔥 Firebase Setup
+
+### Step 1 — Create a Project
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Click **Add project** → follow the setup wizard
+3. Register a **Web app** (the `</>` icon) to get your config keys
+
+### Step 2 — Enable Authentication
+
+1. In the sidebar go to **Build → Authentication**
+2. Click **Get started**
+3. Under **Sign-in method**, enable **Email/Password**
+
+### Step 3 — Enable Firestore
+
+1. In the sidebar go to **Build → Firestore Database**
+2. Click **Create database**
+3. Start in **Test mode** for development (locks down after 30 days — see Security Rules below)
+
+### Step 4 — Security Rules (Production)
+
+Replace the default test-mode rules with user-scoped rules:
+
+```js
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
+
+---
+
+👥 Authors
+
+- Mike Wu
+
+- Peace Cyebukayire
+
+- Zheyuan Lin
+
