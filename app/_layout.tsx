@@ -60,6 +60,6 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.3)', // subtle darkening map
+    backgroundColor: 'rgba(0,0,0,0.18)',
   }
 });

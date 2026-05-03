@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useMemo } from 'react';
-import { Task, Quote, UserProfile, AppSettings } from '../utils/storage';
+import { Task, Quote, UserProfile, AppSettings, getTasks, saveTasks } from '../utils/storage';
 import * as ImagePicker from 'expo-image-picker';
 import { format, differenceInCalendarDays, parseISO } from 'date-fns';
 import { auth, db } from '../src/config/firebase';
@@ -183,10 +183,13 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           (error) => console.log('[Firestore] quotes listener error:', error.code)
         );
       } else {
-        // Signed out — reset every piece of data immediately
+        // Signed out — reset cloud data, then restore any locally saved tasks
         setUser(null);
         resetState();
-        setLoading(false);
+        getTasks().then((local) => {
+          setTasks(local);
+          setLoading(false);
+        }).catch(() => setLoading(false));
       }
     });
 
@@ -261,8 +264,25 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // ─── Task Actions ─────────────────────────────────────────────────────────
   const addTask = async (text: string) => {
-    if (!text.trim() || !user) return;
+    if (!text.trim()) return;
+
     const id = Date.now().toString();
+    const newTask: Task = { id, text, isCompleted: false };
+
+    if (!user) {
+      // Guest mode: persist locally and show immediately
+      setTasks((prev) => {
+        const updated = [...prev, newTask];
+        saveTasks(updated).catch(() => {});
+        return updated;
+      });
+      return;
+    }
+
+    // Signed-in: show task instantly (optimistic), then sync to Firestore.
+    // The onSnapshot listener will reconcile state once the write confirms.
+    setTasks((prev) => [...prev, newTask]);
+
     try {
       await setDoc(doc(db, 'users', user.uid, 'tasks', id), {
         title: text,
@@ -272,12 +292,25 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         completedAt: null,
       });
     } catch {
+      // Roll back the optimistic row on failure
+      setTasks((prev) => prev.filter((t) => t.id !== id));
       Alert.alert('Network Error', 'Task could not be synced to the cloud.');
     }
   };
 
   const toggleTask = async (id: string) => {
-    if (!user) return;
+    if (!user) {
+      setTasks((prev) => {
+        const updated = prev.map((t) =>
+          t.id === id
+            ? { ...t, isCompleted: !t.isCompleted, completedAt: !t.isCompleted ? new Date().toISOString() : undefined }
+            : t
+        );
+        saveTasks(updated).catch(() => {});
+        return updated;
+      });
+      return;
+    }
     const target = tasks.find((t) => t.id === id);
     if (!target) return;
     const nowCompleted = !target.isCompleted;
@@ -287,7 +320,6 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         isCompleted: nowCompleted,
         completedAt,
       });
-      // Pass only whether this toggle was a completion — not the full task list
       await updateStreak(nowCompleted);
     } catch (err: any) {
       console.log('[toggleTask]', err.code);
@@ -295,7 +327,14 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const updateTask = async (id: string, newText: string) => {
-    if (!user) return;
+    if (!user) {
+      setTasks((prev) => {
+        const updated = prev.map((t) => (t.id === id ? { ...t, text: newText } : t));
+        saveTasks(updated).catch(() => {});
+        return updated;
+      });
+      return;
+    }
     await updateDoc(doc(db, 'users', user.uid, 'tasks', id), {
       text: newText,
       title: newText,
@@ -303,7 +342,14 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const deleteTask = async (id: string) => {
-    if (!user) return;
+    if (!user) {
+      setTasks((prev) => {
+        const updated = prev.filter((t) => t.id !== id);
+        saveTasks(updated).catch(() => {});
+        return updated;
+      });
+      return;
+    }
     await deleteDoc(doc(db, 'users', user.uid, 'tasks', id)).catch((e) =>
       console.log('[deleteTask]', e.code)
     );

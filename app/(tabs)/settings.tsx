@@ -1,10 +1,20 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, Alert, ActivityIndicator } from 'react-native';
+import {
+  ActivityIndicator, Alert, Image, ScrollView,
+  StyleSheet, Text, TouchableOpacity, View,
+} from 'react-native';
 import { format } from 'date-fns';
 import { GlassModule } from '../../components/GlassModule';
 import { useDashboardData } from '../../hooks/useDashboardData';
+
+function timeGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -19,6 +29,8 @@ export default function SettingsScreen() {
   }
 
   const isDefaultProfile = userProfile.name === 'Welcome Back!';
+  const streakActive = stats.streak > 0;
+  const streakHot = stats.streak >= 3;
 
   const handleAuthInteraction = () => {
     if (isDefaultProfile) {
@@ -34,7 +46,6 @@ export default function SettingsScreen() {
             style: 'destructive',
             onPress: async () => {
               await signOut();
-              // Replace clears the stack — user cannot swipe back to the dashboard
               router.replace('/auth/signIn' as any);
             },
           },
@@ -44,99 +55,138 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
-      
-      {/* Header Pipeline */}
-      <GlassModule style={styles.profileGlassContainer} contentStyle={{ paddingVertical: 15 }}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 120 }}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Profile card */}
+      <GlassModule style={styles.profileCard} contentStyle={{ paddingVertical: 20 }}>
         {isDefaultProfile ? (
           <TouchableOpacity style={styles.profileHeader} onPress={handleAuthInteraction} activeOpacity={0.7}>
             <View style={styles.avatarContainer}>
-              <Ionicons name="person" size={50} color="#ffffff" />
+              <Ionicons name="person" size={40} color="rgba(255,255,255,0.7)" />
             </View>
-            <View style={[styles.profileTextInfo, { justifyContent: 'center' }]}>
-              <Text style={styles.unsignedText}>Not Signed In</Text>
-              <View style={[styles.signInBtn, { alignSelf: 'flex-start' }]}>
+            <View style={styles.profileTextInfo}>
+              <Text style={styles.unsignedTitle}>Not signed in</Text>
+              <Text style={styles.unsignedSub}>Sign in to sync your data across devices</Text>
+              <View style={styles.signInBtn}>
                 <Text style={styles.signInBtnText}>Sign In</Text>
               </View>
             </View>
           </TouchableOpacity>
         ) : (
           <View style={styles.profileHeader}>
-            <TouchableOpacity 
-              style={styles.avatarContainer} 
-              onPress={pickAvatarImage} 
-              activeOpacity={0.7}
-            >
-              {userProfile.avatarUri ? (
-                <Image source={{ uri: userProfile.avatarUri }} style={{ width: 80, height: 80, borderRadius: 40 }} />
-              ) : (
-                <Ionicons name="person" size={50} color="#ffffff" />
-              )}
+            {/* Avatar with camera tap affordance */}
+            <TouchableOpacity onPress={pickAvatarImage} activeOpacity={0.8} style={styles.avatarWrapper}>
+              <View style={styles.avatarContainer}>
+                {userProfile.avatarUri ? (
+                  <Image source={{ uri: userProfile.avatarUri }} style={styles.avatarImage} />
+                ) : (
+                  <Ionicons name="person" size={40} color="rgba(255,255,255,0.8)" />
+                )}
+              </View>
+              <View style={styles.cameraOverlay}>
+                <Ionicons name="camera" size={11} color="#ffffff" />
+              </View>
             </TouchableOpacity>
-            
-            <View style={[styles.profileTextInfo, { justifyContent: 'center' }]}>
-              <TouchableOpacity onPress={handleAuthInteraction} activeOpacity={0.7}>
-                <Text style={styles.welcomeText} numberOfLines={1}>Welcome back,</Text>
-                <Text style={styles.profileName} numberOfLines={1}>{userProfile.name}</Text>
-                <Text style={styles.profileSubtitle} numberOfLines={1}>{userProfile.email}</Text>
+
+            <View style={styles.profileTextInfo}>
+              <Text style={styles.greeting}>{timeGreeting()},</Text>
+              <Text style={styles.profileName} numberOfLines={1}>{userProfile.name}</Text>
+              <Text style={styles.profileEmail} numberOfLines={1}>{userProfile.email}</Text>
+              <TouchableOpacity onPress={handleAuthInteraction} activeOpacity={0.7} style={styles.signOutBtn}>
+                <Text style={styles.signOutText}>Sign out</Text>
               </TouchableOpacity>
             </View>
           </View>
         )}
       </GlassModule>
 
-      {/* Navigation Stack Configuration */}
-      <GlassModule style={styles.listModule}>
-        <TouchableOpacity style={styles.navRow} onPress={() => router.push('/accountManagement' as any)} activeOpacity={0.7}>
+      {/* Navigation rows */}
+      <GlassModule style={styles.listModule} contentStyle={{ padding: 0 }}>
+        <TouchableOpacity
+          style={styles.navRow}
+          onPress={() => router.push('/accountManagement' as any)}
+          activeOpacity={0.7}
+        >
           <View style={[styles.navIconBox, { backgroundColor: '#FF2D55' }]}>
-            <Ionicons name="person" size={20} color="#ffffff" />
+            <Ionicons name="person" size={18} color="#ffffff" />
           </View>
-          <Text style={styles.navRowText}>Account Management</Text>
-          <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.4)" />
+          <Text style={styles.navRowText}>Account</Text>
+          <Ionicons name="chevron-forward" size={17} color="rgba(255,255,255,0.35)" />
         </TouchableOpacity>
-        
+
         <View style={styles.navDivider} />
-        
-        <TouchableOpacity style={styles.navRow} onPress={() => router.push('/wallpaperSettings' as any)} activeOpacity={0.7}>
+
+        <TouchableOpacity
+          style={styles.navRow}
+          onPress={() => router.push('/wallpaperSettings' as any)}
+          activeOpacity={0.7}
+        >
           <View style={[styles.navIconBox, { backgroundColor: '#5856D6' }]}>
-            <Ionicons name="images" size={20} color="#ffffff" />
+            <Ionicons name="images" size={18} color="#ffffff" />
           </View>
           <Text style={styles.navRowText}>Wallpaper</Text>
-          <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.4)" />
+          <Ionicons name="chevron-forward" size={17} color="rgba(255,255,255,0.35)" />
+        </TouchableOpacity>
+
+        <View style={styles.navDivider} />
+
+        <TouchableOpacity
+          style={styles.navRow}
+          onPress={() => router.push('/manageQuotes' as any)}
+          activeOpacity={0.7}
+        >
+          <View style={[styles.navIconBox, { backgroundColor: '#A78BFA' }]}>
+            <Ionicons name="chatbubble-ellipses" size={18} color="#ffffff" />
+          </View>
+          <Text style={styles.navRowText}>Quotes</Text>
+          <Ionicons name="chevron-forward" size={17} color="rgba(255,255,255,0.35)" />
         </TouchableOpacity>
       </GlassModule>
 
-      {/* Home Metrics Block (Maintained strictly for layout continuity) */}
+      {/* Stats */}
       <GlassModule style={styles.module}>
-        <Text style={styles.sectionTitle}>Home Analytics</Text>
+        <Text style={styles.sectionLabel}>YOUR PROGRESS</Text>
         <View style={styles.statBoxContainer}>
-          <View style={styles.statBox}>
-            <Ionicons name="checkmark-circle" size={28} color="#34C759" style={{ marginBottom: 6 }} />
-            <Text style={styles.statValue}>{stats.tasksDone}</Text>
+          <View style={[styles.statBox, { borderColor: 'rgba(52,199,89,0.35)' }]}>
+            <Ionicons name="checkmark-circle" size={26} color="#34C759" style={{ marginBottom: 10 }} />
+            <Text style={[styles.statValue, { color: '#34C759' }]}>{stats.tasksDone}</Text>
             <Text style={styles.statLabel}>Tasks Done</Text>
           </View>
-          
-          <View style={styles.statBox}>
-            <Ionicons name="flame" size={28} color="#FF9500" style={{ marginBottom: 6 }} />
-            <Text style={styles.statValue}>{stats.streak}</Text>
-            <Text style={styles.statLabel}>Days Streak</Text>
+
+          <View style={[styles.statBox, streakActive && { borderColor: 'rgba(255,149,0,0.4)' }]}>
+            <Ionicons
+              name="flame"
+              size={26}
+              color={streakActive ? '#FF9500' : 'rgba(255,255,255,0.3)'}
+              style={{ marginBottom: 10 }}
+            />
+            <Text style={[styles.statValue, streakActive && { color: '#FF9500' }]}>
+              {stats.streak}
+            </Text>
+            <Text style={styles.statLabel}>Day Streak</Text>
+            {streakHot && (
+              <Text style={styles.streakBadge}>On a roll! 🔥</Text>
+            )}
           </View>
         </View>
       </GlassModule>
 
+      {/* App info */}
       <GlassModule style={styles.module}>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>App Version</Text>
           <Text style={styles.infoValue}>1.0.0</Text>
         </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Joined System Base</Text>
+        <View style={[styles.infoRow, { borderBottomWidth: 0 }]}>
+          <Text style={styles.infoLabel}>Member Since</Text>
           <Text style={styles.infoValue}>
-            {userProfile.joinedDate ? format(new Date(userProfile.joinedDate), 'MMM d, yyyy') : 'Unknown'}
+            {userProfile.joinedDate ? format(new Date(userProfile.joinedDate), 'MMM d, yyyy') : '—'}
           </Text>
         </View>
       </GlassModule>
-
     </ScrollView>
   );
 }
@@ -145,138 +195,189 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 120, // Moved down vertically
+    paddingTop: 110,
   },
-  profileGlassContainer: {
-    marginBottom: 25,
-    // Horizontal padding stripped entirely to sync perfectly with 100% width of stack rows naturally
+
+  /* Profile */
+  profileCard: {
+    marginBottom: 20,
   },
   profileHeader: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  avatarWrapper: {
+    marginRight: 18,
+    position: 'relative',
+  },
   avatarContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(0,0,0,0.15)',
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    backgroundColor: 'rgba(255,255,255,0.08)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 18,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.25)',
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+  },
+  cameraOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#5B8DEF',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: 'rgba(0,0,0,0.3)',
   },
   profileTextInfo: {
     flex: 1,
   },
+  greeting: {
+    fontSize: 13,
+    fontFamily: 'Quicksand_500Medium',
+    color: 'rgba(255,255,255,0.55)',
+    marginBottom: 2,
+  },
   profileName: {
-    fontSize: 24,
+    fontSize: 22,
+    fontFamily: 'Quicksand_700Bold',
+    color: '#ffffff',
+    marginBottom: 2,
+  },
+  profileEmail: {
+    fontSize: 13,
+    fontFamily: 'Inter_400Regular',
+    color: 'rgba(255,255,255,0.5)',
+    marginBottom: 10,
+  },
+  signOutBtn: {
+    alignSelf: 'flex-start',
+  },
+  signOutText: {
+    color: '#FF453A',
+    fontFamily: 'Quicksand_600SemiBold',
+    fontSize: 13,
+  },
+  unsignedTitle: {
+    fontSize: 18,
     fontFamily: 'Quicksand_700Bold',
     color: '#ffffff',
     marginBottom: 4,
   },
-  welcomeText: {
-    fontSize: 14,
+  unsignedSub: {
+    fontSize: 13,
     fontFamily: 'Quicksand_500Medium',
-    color: 'rgba(255,255,255,0.7)',
-    marginBottom: 2,
-  },
-  profileSubtitle: {
-    fontSize: 15,
-    fontFamily: 'Inter_500Medium',
-    color: 'rgba(255,255,255,0.6)',
-  },
-  unsignedText: {
-    fontSize: 18,
-    fontFamily: 'Quicksand_600SemiBold',
-    color: 'rgba(255,255,255,0.8)',
-    marginBottom: 4,
+    color: 'rgba(255,255,255,0.5)',
+    marginBottom: 12,
+    lineHeight: 18,
   },
   signInBtn: {
-    marginTop: 8,
-    backgroundColor: '#007AFF', // Standard Blue
-    paddingVertical: 12,
-    paddingHorizontal: 18,
+    backgroundColor: '#5B8DEF',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 12,
     alignSelf: 'flex-start',
   },
   signInBtnText: {
     color: '#ffffff',
-    fontFamily: 'Quicksand_600SemiBold',
+    fontFamily: 'Quicksand_700Bold',
     fontSize: 14,
   },
+
+  /* Nav rows */
   listModule: {
-    paddingHorizontal: 0,
-    paddingVertical: 5,
     marginBottom: 20,
   },
   navRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 14,
+    paddingVertical: 15,
     paddingHorizontal: 20,
   },
   navIconBox: {
-    width: 34,
-    height: 34,
+    width: 32,
+    height: 32,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 15,
+    marginRight: 14,
   },
   navRowText: {
     flex: 1,
     color: '#ffffff',
-    fontSize: 19,
+    fontSize: 16,
     fontFamily: 'Quicksand_600SemiBold',
   },
   navDivider: {
-    height: 1,
+    height: StyleSheet.hairlineWidth,
     backgroundColor: 'rgba(255,255,255,0.1)',
-    marginLeft: 60, // Align exactly with text
+    marginLeft: 66,
   },
+
+  /* Stats */
   module: {
     marginBottom: 20,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontFamily: 'Quicksand_700Bold',
-    color: '#ffffff',
-    marginBottom: 15,
+  sectionLabel: {
+    fontSize: 11,
+    fontFamily: 'Quicksand_600SemiBold',
+    color: 'rgba(255,255,255,0.45)',
+    letterSpacing: 2,
+    marginBottom: 16,
   },
   statBoxContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: 12,
   },
   statBox: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    borderRadius: 12,
-    padding: 15,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 18,
+    paddingVertical: 20,
     alignItems: 'center',
-    marginHorizontal: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   statValue: {
     color: '#ffffff',
-    fontSize: 20,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: 42,
+    fontFamily: 'Quicksand_700Bold',
+    lineHeight: 46,
     marginBottom: 4,
   },
   statLabel: {
-    color: 'rgba(255, 255, 255, 0.5)',
+    color: 'rgba(255,255,255,0.45)',
     fontSize: 12,
     fontFamily: 'Quicksand_600SemiBold',
+    letterSpacing: 0.5,
   },
+  streakBadge: {
+    marginTop: 6,
+    color: '#FF9500',
+    fontSize: 11,
+    fontFamily: 'Quicksand_600SemiBold',
+  },
+
+  /* Info rows */
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    paddingVertical: 13,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
   },
   infoLabel: {
-    color: 'rgba(255, 255, 255, 0.6)',
+    color: 'rgba(255,255,255,0.5)',
     fontFamily: 'Quicksand_500Medium',
     fontSize: 14,
   },
@@ -284,5 +385,5 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontFamily: 'Quicksand_600SemiBold',
     fontSize: 14,
-  }
+  },
 });

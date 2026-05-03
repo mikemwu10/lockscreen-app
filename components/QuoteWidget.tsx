@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -12,39 +11,33 @@ interface QuoteWidgetProps {
 
 export const QuoteWidget: React.FC<QuoteWidgetProps> = ({ activeQuote }) => {
   const router = useRouter();
-  const { setActiveQuote, quotes } = useDashboardData();
-
+  const { quotes } = useDashboardData();
   const targetRef = useRef<View>(null);
   const [menuAnchorY, setMenuAnchorY] = useState<number | null>(null);
 
   const handleLongPress = () => {
-    targetRef.current?.measure((_x, _y, _width, _height, _pageX, pageY) => {
-      setMenuAnchorY(pageY - 50); // Mount horizontal popup correctly dynamically over the widget bounds
+    targetRef.current?.measure((_x, _y, _w, _h, _px, pageY) => {
+      setMenuAnchorY(pageY - 50);
     });
   };
 
   const menuActions = [
-    { label: 'Change Library', onPress: () => router.push('/manageQuotes' as any) }
+    { label: 'Manage Quote Library', onPress: () => router.push('/manageQuotes' as any) },
   ];
 
-  // If the library is completely empty, always show the motivational fallback
-  // regardless of whatever activeQuoteState was last persisted in Firestore.
   const displayQuote =
     quotes.length === 0 || !activeQuote
-      ? 'Fuel a New Day with a New Motivation. ✨'
+      ? 'Fuel a new day with a new motivation.'
       : activeQuote;
 
   return (
     <GlassModule style={styles.container}>
       <View ref={targetRef} collapsable={false}>
-        <TouchableOpacity
-          style={styles.row}
-          onLongPress={handleLongPress}
-          delayLongPress={500}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="sunny-outline" size={28} color="#f0f0f0" style={styles.icon} />
+        <TouchableOpacity onLongPress={handleLongPress} delayLongPress={500} activeOpacity={0.75}>
+          <Text style={styles.label}>TODAY'S INSPIRATION</Text>
+          <Text style={styles.quoteDecor}>"</Text>
           <Text style={styles.text}>{displayQuote}</Text>
+          <Text style={styles.hint}>Hold to manage quotes</Text>
         </TouchableOpacity>
       </View>
 
@@ -62,18 +55,34 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 15,
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  label: {
+    fontSize: 11,
+    fontFamily: 'Quicksand_600SemiBold',
+    color: '#A78BFA',
+    letterSpacing: 2.5,
+    marginBottom: 10,
   },
-  icon: {
-    marginRight: 15,
+  quoteDecor: {
+    fontSize: 50,
+    lineHeight: 34,
+    color: '#A78BFA',
+    fontFamily: 'Quicksand_700Bold',
+    marginBottom: 8,
+    opacity: 0.75,
   },
   text: {
-    flex: 1,
-    color: '#ffffff',
-    fontSize: 22, // slightly decreased font size further
+    color: 'rgba(255, 255, 255, 0.95)',
+    fontSize: 18,
     fontFamily: 'Quicksand_600SemiBold',
-    lineHeight: 32,
+    lineHeight: 28,
+    fontStyle: 'italic',
+  },
+  hint: {
+    fontSize: 11,
+    color: 'rgba(255, 255, 255, 0.28)',
+    fontFamily: 'Quicksand_500Medium',
+    marginTop: 12,
+    textAlign: 'right',
+    letterSpacing: 0.3,
   },
 });
