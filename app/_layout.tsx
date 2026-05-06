@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { ImageBackground, StyleSheet, View } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { DashboardProvider, useDashboardData } from '@/hooks/useDashboardData';
 import { ThemeProvider, DefaultTheme } from '@react-navigation/native';
 
@@ -22,8 +23,10 @@ function RootNavigation() {
       style={styles.background}
       resizeMode="cover"
     >
-      {/* Semi-transparent overlay to ensure content is readable over bright images */}
-      <View style={styles.overlay} />
+      {/* Modern overlay: deep, semi-opaque, with blur for depth */}
+      <BlurView intensity={40} tint="dark" style={styles.overlay}>
+        <View style={styles.overlayColor} />
+      </BlurView>
       
       <Stack 
         screenOptions={{ 
@@ -60,6 +63,11 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.18)',
-  }
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  overlayColor: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(24, 28, 36, 0.82)', // Deep blue, modern, less transparent
+  },
 });

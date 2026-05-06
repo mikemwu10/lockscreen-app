@@ -64,10 +64,10 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(30, 30, 48, 0.88)',
+    backgroundColor: 'rgba(24, 28, 36, 0.96)', // Deep blue, modern, less transparent
     borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(255,255,255,0.18)',
+    borderColor: 'rgba(44, 54, 70, 0.7)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.4,
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 7,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderTopColor: 'rgba(30, 30, 48, 0.88)',
+    borderTopColor: 'rgba(24, 28, 36, 0.96)', // Deep blue, modern, less transparent
     marginTop: -1,
   }
 });

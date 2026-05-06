@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.6)',
+    color: '#1ecbe1', // Vibrant cyan
     fontFamily: 'Quicksand_400Regular',
     marginBottom: 15,
   },
@@ -84,9 +84,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonOutline: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: 'rgba(30,203,225,0.13)', // Vibrant cyan, less transparent
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderColor: '#1ecbe1',
     paddingVertical: 14,
     borderRadius: 12,
     flexDirection: 'row',

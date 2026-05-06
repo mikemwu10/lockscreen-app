@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.6)',
+    color: '#1ecbe1', // Vibrant cyan
     fontFamily: 'Quicksand_400Regular',
     marginBottom: 20,
   },
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: 'rgba(30,203,225,0.13)', // Vibrant cyan, less transparent
   },
   thumbnailImage: {
     width: '100%',
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: 60,
     paddingBottom: 40,
-    backgroundColor: 'rgba(0,0,0,0.2)', // slight darkening to ensure buttons show
+    backgroundColor: 'rgba(30,203,225,0.10)', // Vibrant cyan, less transparent
   },
   modalHeader: {
     flexDirection: 'row',
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   modalBackButton: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: '#1ecbe1', // Vibrant cyan
     padding: 10,
     borderRadius: 20,
   },

@@ -65,16 +65,16 @@ const styles = StyleSheet.create({
   time: {
     fontSize: 90,
     lineHeight: 90,
-    color: '#ffffff',
+    color: '#1ecbe1', // Vibrant cyan
     fontFamily: 'Inter_300Light',
     letterSpacing: -3,
-    textShadowColor: 'rgba(0, 0, 0, 0.45)',
+    textShadowColor: 'rgba(30, 203, 225, 0.25)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 14,
   },
   ampm: {
     fontSize: 22,
-    color: 'rgba(167, 139, 250, 0.9)',
+    color: '#ffb300', // Gold accent
     fontFamily: 'Inter_300Light',
     letterSpacing: 2,
     marginLeft: 8,
@@ -82,11 +82,11 @@ const styles = StyleSheet.create({
   },
   date: {
     fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.65)',
+    color: '#1a2236', // Deep blue-gray
     fontFamily: 'Inter_400Regular',
     marginTop: 10,
     letterSpacing: 2.5,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowColor: 'rgba(30, 203, 225, 0.12)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 4,
   },

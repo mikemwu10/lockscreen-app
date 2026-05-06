@@ -5,25 +5,31 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+
+// More vibrant accent colors
+const tintColorLight = '#1ecbe1'; // Vibrant cyan
+const tintColorDark = '#ffb300'; // Warm gold
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
+    text: '#1a2236', // Deep blue-gray
+    background: '#f7fafc', // Soft off-white
     tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
+    icon: '#1ecbe1', // Accent cyan
+    tabIconDefault: '#b0b8c1',
     tabIconSelected: tintColorLight,
+    accent: '#ffb300', // Gold accent
+    card: '#e3f6fd', // Light blue card
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
+    text: '#f7fafc',
+    background: '#181c24', // Deep blue
     tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    icon: '#ffb300', // Gold accent
+    tabIconDefault: '#6c7a89',
     tabIconSelected: tintColorDark,
+    accent: '#1ecbe1', // Cyan accent
+    card: '#232b3a', // Blue-gray card
   },
 };
 

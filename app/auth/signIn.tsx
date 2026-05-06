@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 15,
-    color: 'rgba(255,255,255,0.7)',
+    color: '#1ecbe1', // Vibrant cyan
     fontFamily: 'Quicksand_500Medium',
     marginBottom: 20,
     lineHeight: 22,
@@ -139,10 +139,10 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(30,203,225,0.13)', // Vibrant cyan, less transparent
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: '#1ecbe1',
     marginBottom: 20,
   },
   inputIcon: {

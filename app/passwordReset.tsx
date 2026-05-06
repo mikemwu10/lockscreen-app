@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 15,
-    color: 'rgba(255,255,255,0.7)',
+    color: '#1ecbe1', // Vibrant cyan
     fontFamily: 'Quicksand_500Medium',
     marginBottom: 20,
     lineHeight: 22,
@@ -168,18 +168,18 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.15)',
+    backgroundColor: 'rgba(30,203,225,0.13)', // Vibrant cyan, less transparent
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: '#1ecbe1',
     marginBottom: 20,
     paddingVertical: 14,
-    opacity: 0.7, // Slightly muted to signal read-only (for locked state)
+    opacity: 0.9, // More visible
   },
   inputContainerEditable: {
     opacity: 1, // Full opacity for the editable state
-    borderColor: 'rgba(255,255,255,0.18)',
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    borderColor: '#1ecbe1',
+    backgroundColor: 'rgba(30,203,225,0.18)',
   },
   inputIcon: {
     paddingLeft: 15,

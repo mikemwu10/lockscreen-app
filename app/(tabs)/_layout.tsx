@@ -13,14 +13,14 @@ export default function TabLayout() {
         tabBarStyle: {
           position: 'absolute',
           borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: 'rgba(255, 255, 255, 0.15)',
+          borderTopColor: 'rgba(24, 28, 36, 0.7)', // Deep modern border
           elevation: 0,
           height: 80,
-          backgroundColor: 'rgba(18, 18, 32, 0.72)',
+          backgroundColor: 'rgba(24, 28, 36, 0.92)', // Deep blue, modern, less transparent
         },
 
-        tabBarActiveTintColor: '#ffffff',
-        tabBarInactiveTintColor: 'rgba(255,255,255,0.5)',
+        tabBarActiveTintColor: '#1ecbe1', // Modern cyan accent
+        tabBarInactiveTintColor: '#b0b8c1', // Muted gray
       }}>
       <Tabs.Screen
         name="index"

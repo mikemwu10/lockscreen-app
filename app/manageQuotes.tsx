@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.6)',
+    color: '#1ecbe1', // Vibrant cyan
     fontFamily: 'Quicksand_400Regular',
     marginBottom: 15,
   },
@@ -138,8 +138,8 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    color: '#ffffff',
+    backgroundColor: 'rgba(30,203,225,0.13)', // Vibrant cyan, less transparent
+    color: '#1a2236', // Deep blue-gray for contrast
     paddingVertical: 12,
     paddingHorizontal: 15,
     borderRadius: 8,
@@ -161,15 +161,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: 'rgba(30,203,225,0.10)', // Vibrant cyan, less transparent
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,
   },
   activeListItem: {
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: '#ffb300', // Gold accent
     borderWidth: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: 'rgba(255, 179, 0, 0.18)', // Gold accent, less transparent
   },
   listItemText: {
     flex: 1,
