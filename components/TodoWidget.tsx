@@ -22,17 +22,26 @@ const TodoItem = ({
   onToggle: (id: string) => void;
   onUpdateTask: (id: string, text: string) => void;
 }) => {
-  const opacity = useRef(new Animated.Value(1)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(20)).current;
   const translateX = useRef(new Animated.Value(0)).current;
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(task.text);
   const [isChecking, setIsChecking] = useState(false);
 
+  React.useEffect(() => {
+    // Animate in on mount
+    Animated.parallel([
+      Animated.timing(opacity, { toValue: 1, duration: 320, useNativeDriver: true }),
+      Animated.timing(translateY, { toValue: 0, duration: 320, useNativeDriver: true }),
+    ]).start();
+  }, []);
+
   const handleToggle = () => {
     setIsChecking(true);
     Animated.parallel([
-      Animated.timing(opacity, { toValue: 0, duration: 360, useNativeDriver: true }),
-      Animated.timing(translateX, { toValue: 16, duration: 360, useNativeDriver: true }),
+      Animated.timing(opacity, { toValue: 0, duration: 320, useNativeDriver: true }),
+      Animated.timing(translateX, { toValue: 16, duration: 320, useNativeDriver: true }),
     ]).start(() => {
       onToggle(task.id);
       setIsChecking(false);
@@ -47,7 +56,7 @@ const TodoItem = ({
   };
 
   return (
-    <Animated.View style={[styles.taskRow, { opacity, transform: [{ translateX }] }]}>
+    <Animated.View style={[styles.taskRow, { opacity, transform: [{ translateY }, { translateX }] }]}>...
       <TouchableOpacity onPress={handleToggle} style={styles.checkboxTouch} activeOpacity={0.6}>
         <View style={[styles.checkbox, isChecking && styles.checkboxDone]}>
           {isChecking && <Ionicons name="checkmark" size={13} color="#fff" />}
@@ -82,6 +91,7 @@ export const TodoWidget: React.FC<TodoWidgetProps> = ({
 }) => {
   const router = useRouter();
   const [newTask, setNewTask] = useState('');
+  const [addBtnScale] = useState(new Animated.Value(1));
 
   const activeTasks = tasks.filter((t) => !t.isCompleted);
   const displayTasks = activeTasks.slice(0, 10);
@@ -89,9 +99,13 @@ export const TodoWidget: React.FC<TodoWidgetProps> = ({
   const handleAddTask = () => {
     if (!newTask.trim()) return;
     if (activeTasks.length >= 10) {
-      Alert.alert('Focus up ✨', "Finish what's on your plate first!", [{ text: 'Got it' }]);
+      Alert.alert('Focus up', "Finish what's on your plate first!", [{ text: 'Got it' }]);
       return;
     }
+    Animated.sequence([
+      Animated.timing(addBtnScale, { toValue: 0.92, duration: 80, useNativeDriver: true }),
+      Animated.timing(addBtnScale, { toValue: 1, duration: 120, useNativeDriver: true }),
+    ]).start();
     onAddTask(newTask);
     setNewTask('');
   };
@@ -133,10 +147,12 @@ export const TodoWidget: React.FC<TodoWidgetProps> = ({
           onSubmitEditing={handleAddTask}
           returnKeyType="done"
         />
-        <TouchableOpacity style={styles.addButton} onPress={handleAddTask} activeOpacity={0.8}>
-          <Ionicons name="add" size={17} color="#ffffff" />
-          <Text style={styles.addButtonText}>Add</Text>
-        </TouchableOpacity>
+        <Animated.View style={{ transform: [{ scale: addBtnScale }] }}>
+          <TouchableOpacity style={styles.addButton} onPress={handleAddTask} activeOpacity={0.8}>
+            <Ionicons name="add" size={17} color="#ffffff" />
+            <Text style={styles.addButtonText}>Add</Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
 
       {/* Completed tasks link */}
